@@ -11,7 +11,7 @@ namespace Roommates.Repositories
         public ChoreRepository(string connectionString) : base(connectionString) { }
 
         // returns a single chore with the given id
-        public Chore GetbyId(int id)
+        public Chore GetById(int id)
         {
             using (SqlConnection conn = Connection)
             {
