@@ -4,19 +4,16 @@ using System.Collections.Generic;
 
 namespace Roommates.Repositories
 {
-    // this interacts with chore data & uses BaseRepository's connection property via inheritance
     public class ChoreRepository : BaseRepository
     {
-        // passes connection string to BaseRepository during instantiation
         public ChoreRepository(string connectionString) : base(connectionString) { }
 
-        // returns a single chore with the given id
         public Chore GetById(int id)
         {
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (SqlCommand cmd = Connection.CreateCommand())
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = "SELECT Name FROM Chore WHERE Id = @id";
                     cmd.Parameters.AddWithValue("@id", id);
@@ -30,7 +27,7 @@ namespace Roommates.Repositories
                             chore = new Chore
                             {
                                 Id = id,
-                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
                             };
                         }
                         return chore;

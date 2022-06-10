@@ -113,36 +113,36 @@ namespace Roommates
 
                         Roommate roommate = roommateRepo.GetById(rmId);
 
-                        Console.WriteLine($"{roommate.Id} - {roommate.FirstName} {roommate.LastName} Move In Date: {roommate.MoveInDate} Rent Portion: {roommate.RentPortion}");
+                        Console.WriteLine($"{roommate.FirstName} {roommate.LastName} lives in {roommate.Room.Name} - Rent Portion: {roommate.RentPortion}");
                         Console.Write("Press any key to continue");
                         Console.ReadKey();
                         break;
-                    case ("Add a roommate"):
-                        Console.Write("Roommate First Name: ");
-                        string firstName = Console.ReadLine();
+                    //case ("Add a roommate"):
+                    //    Console.Write("Roommate First Name: ");
+                    //    string firstName = Console.ReadLine();
 
-                        Console.Write("Roommate Last Name: ");
-                        string lastName = Console.ReadLine();
+                    //    Console.Write("Roommate Last Name: ");
+                    //    string lastName = Console.ReadLine();
 
-                        Console.Write("Rent Portion: ");
-                        int rent = int.Parse(Console.ReadLine());
+                    //    Console.Write("Rent Portion: ");
+                    //    int rent = int.Parse(Console.ReadLine());
 
-                        DateTime moveIn = DateTime.Now;
+                    //    DateTime moveIn = DateTime.Now;
 
-                        Roommate roommateToAdd = new Roommate()
-                        {
-                            FirstName = firstName,
-                            LastName = lastName,
-                            MoveInDate = moveIn,
-                            RentPortion = rent
-                        };
+                    //    Roommate roommateToAdd = new Roommate()
+                    //    {
+                    //        FirstName = firstName,
+                    //        LastName = lastName,
+                    //        MoveInDate = moveIn,
+                    //        RentPortion = rent
+                    //    };
 
-                        roommateRepo.Insert(roommateToAdd);
+                        //roommateRepo.Insert(roommateToAdd);
 
-                        Console.WriteLine($"{roommateToAdd.FirstName} {roommateToAdd.LastName} has been added and assigned an Id of {roommateToAdd.Id}");
-                        Console.Write("Press any key to continue");
-                        Console.ReadKey();
-                        break;
+                        //Console.WriteLine($"{roommateToAdd.FirstName} {roommateToAdd.LastName} has been added and assigned an Id of {roommateToAdd.Id}");
+                        //Console.Write("Press any key to continue");
+                        //Console.ReadKey();
+                        //break;
 
                     case ("Exit"):
                         runProgram = false;
@@ -166,7 +166,7 @@ namespace Roommates
                 "Add a chore",
                 //"Show all roommates",
                 "Search for roommate",
-                "Add a roommate",
+                //"Add a roommate",
                 "Exit"
             };
 
