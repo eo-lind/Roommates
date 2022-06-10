@@ -15,6 +15,7 @@ namespace Roommates
         {
             RoomRepository roomRepo = new RoomRepository(CONNECTION_STRING);
             ChoreRepository choreRepo = new ChoreRepository(CONNECTION_STRING);
+            RoommateRepository roommateRepo = new RoommateRepository(CONNECTION_STRING);
 
             bool runProgram = true;
             while (runProgram)
@@ -61,6 +62,7 @@ namespace Roommates
                         Console.Write("Press any key to continue");
                         Console.ReadKey();
                         break;
+
                     case ("Show all chores"):
                         List<Chore> chores = choreRepo.GetAll();
                         foreach (Chore c in chores)
@@ -95,6 +97,53 @@ namespace Roommates
                         Console.Write("Press any key to continue");
                         Console.ReadKey();
                         break;
+
+                    //case ("Show all roommates"):
+                    //    List<Roommate> roommates = roommateRepo.GetAll();
+                    //    foreach (Roommate r in roommates)
+                    //    {
+                    //        Console.WriteLine($"{r.FirstName} {r.LastName} moved in on {r.MoveInDate}, has an Id of {r.Id}, and rent portion of {r.RentPortion}");
+                    //    }
+                    //    Console.Write("Press any key to continue");
+                    //    Console.ReadKey();
+                    //    break;
+                    case ("Search for roommate"):
+                        Console.Write("Roommate Id: ");
+                        int rmId = int.Parse(Console.ReadLine());
+
+                        Roommate roommate = roommateRepo.GetById(rmId);
+
+                        Console.WriteLine($"{roommate.Id} - {roommate.FirstName} {roommate.LastName} Move In Date: {roommate.MoveInDate} Rent Portion: {roommate.RentPortion}");
+                        Console.Write("Press any key to continue");
+                        Console.ReadKey();
+                        break;
+                    case ("Add a roommate"):
+                        Console.Write("Roommate First Name: ");
+                        string firstName = Console.ReadLine();
+
+                        Console.Write("Roommate Last Name: ");
+                        string lastName = Console.ReadLine();
+
+                        Console.Write("Rent Portion: ");
+                        int rent = int.Parse(Console.ReadLine());
+
+                        DateTime moveIn = DateTime.Now;
+
+                        Roommate roommateToAdd = new Roommate()
+                        {
+                            FirstName = firstName,
+                            LastName = lastName,
+                            MoveInDate = moveIn,
+                            RentPortion = rent
+                        };
+
+                        roommateRepo.Insert(roommateToAdd);
+
+                        Console.WriteLine($"{roommateToAdd.FirstName} {roommateToAdd.LastName} has been added and assigned an Id of {roommateToAdd.Id}");
+                        Console.Write("Press any key to continue");
+                        Console.ReadKey();
+                        break;
+
                     case ("Exit"):
                         runProgram = false;
                         break;
@@ -115,6 +164,9 @@ namespace Roommates
                 "Show all chores",
                 "Search for chore",
                 "Add a chore",
+                //"Show all roommates",
+                "Search for roommate",
+                "Add a roommate",
                 "Exit"
             };
 
