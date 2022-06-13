@@ -36,7 +36,6 @@ namespace Roommates.Repositories
             }
         }
 
-        // add a new chore to the database
         public void Insert(Chore chore)
         {
             using (SqlConnection conn = Connection)
@@ -45,17 +44,16 @@ namespace Roommates.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"INSERT INTO Chore (Name)
-                        OUTPUT INSERTED.Id
-                        VALUES (@name)";
+                                            OUTPUT INSERTED.Id
+                                            VALUES (@name)";
                     cmd.Parameters.AddWithValue("@name", chore.Name);
                     int id = (int)cmd.ExecuteScalar();
-
                     chore.Id = id;
                 }
             }
         }
-        // get all of the chores in the db (as a list)
-        public List<Chore> GetAll()
+
+        public List<Chore> GetUnassignedChores()
         {
             using (SqlConnection conn = Connection)
             {
@@ -63,14 +61,12 @@ namespace Roommates.Repositories
 
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT Id, Name FROM Chore";
+                    cmd.CommandText = "SELECT Chore.Id, Chore.Name, Roommate.FirstName FROM Chore LEFT JOIN RoommateChore ON RoommateChore.ChoreId = Chore.Id LEFT JOIN Roommate ON RoommateChore.RoommateId = Roommate.Id WHERE Roommate.Id IS NULL;";
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        // list that holds the chores retrieved from db
                         List<Chore> chores = new List<Chore>();
 
-                        // Read() will return true if there's more data to read
                         while (reader.Read())
                         {
                             int idColumnPosition = reader.GetOrdinal("Id");
@@ -80,21 +76,20 @@ namespace Roommates.Repositories
                             int nameColumnPosition = reader.GetOrdinal("Name");
                             string nameValue = reader.GetString(nameColumnPosition);
 
-                            // creates a new chore object with data from the db
                             Chore chore = new Chore
                             {
                                 Id = idValue,
                                 Name = nameValue
                             };
 
-                            // add the chore object to the list
                             chores.Add(chore);
                         }
-                        // return the list of chores
+
                         return chores;
                     }
                 }
             }
         }
+
     }
 }
