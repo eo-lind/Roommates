@@ -4,19 +4,54 @@ using System.Collections.Generic;
 
 namespace Roommates.Repositories
 {
-    // this interacts with chore data & uses BaseRepository's connection property via inheritance
     public class ChoreRepository : BaseRepository
     {
-        // passes connection string to BaseRepository during instantiation
         public ChoreRepository(string connectionString) : base(connectionString) { }
 
-        // returns a single chore with the given id
+        public List<Chore> GetAll()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id , Name FROM Chore";
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        List<Chore> chores = new List<Chore>();
+
+                        while (reader.Read())
+                        {
+                            int idColumnPosition = reader.GetOrdinal("Id");
+
+                            int idValue = reader.GetInt32(idColumnPosition);
+
+                            int nameColumnPosition = reader.GetOrdinal("Name");
+                            string nameValue = reader.GetString(nameColumnPosition);
+
+                            Chore chore = new Chore
+                            {
+                                Id = idValue,
+                                Name = nameValue
+                            };
+
+                            chores.Add(chore);
+                        }
+
+                        return chores;
+                    }
+                }
+            }
+        }
+
         public Chore GetById(int id)
         {
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (SqlCommand cmd = Connection.CreateCommand())
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = "SELECT Name FROM Chore WHERE Id = @id";
                     cmd.Parameters.AddWithValue("@id", id);
@@ -30,7 +65,7 @@ namespace Roommates.Repositories
                             chore = new Chore
                             {
                                 Id = id,
-                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
                             };
                         }
                         return chore;
@@ -39,7 +74,6 @@ namespace Roommates.Repositories
             }
         }
 
-        // add a new chore to the database
         public void Insert(Chore chore)
         {
             using (SqlConnection conn = Connection)
@@ -48,17 +82,16 @@ namespace Roommates.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"INSERT INTO Chore (Name)
-                        OUTPUT INSERTED.Id
-                        VALUES (@name)";
+                                            OUTPUT INSERTED.Id
+                                            VALUES (@name)";
                     cmd.Parameters.AddWithValue("@name", chore.Name);
                     int id = (int)cmd.ExecuteScalar();
-
                     chore.Id = id;
                 }
             }
         }
-        // get all of the chores in the db (as a list)
-        public List<Chore> GetAll()
+
+        public List<Chore> GetUnassignedChores()
         {
             using (SqlConnection conn = Connection)
             {
@@ -66,14 +99,12 @@ namespace Roommates.Repositories
 
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT Id, Name FROM Chore";
+                    cmd.CommandText = "SELECT Chore.Id, Chore.Name, Roommate.FirstName FROM Chore LEFT JOIN RoommateChore ON RoommateChore.ChoreId = Chore.Id LEFT JOIN Roommate ON RoommateChore.RoommateId = Roommate.Id WHERE Roommate.Id IS NULL;";
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        // list that holds the chores retrieved from db
                         List<Chore> chores = new List<Chore>();
 
-                        // Read() will return true if there's more data to read
                         while (reader.Read())
                         {
                             int idColumnPosition = reader.GetOrdinal("Id");
@@ -83,21 +114,20 @@ namespace Roommates.Repositories
                             int nameColumnPosition = reader.GetOrdinal("Name");
                             string nameValue = reader.GetString(nameColumnPosition);
 
-                            // creates a new chore object with data from the db
                             Chore chore = new Chore
                             {
                                 Id = idValue,
                                 Name = nameValue
                             };
 
-                            // add the chore object to the list
                             chores.Add(chore);
                         }
-                        // return the list of chores
+
                         return chores;
                     }
                 }
             }
         }
+
     }
 }
