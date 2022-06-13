@@ -24,6 +24,7 @@ namespace Roommates
 
                 switch (selection)
                 {
+                    // ---------------------------------------------ROOMS--------------------------------------------- //
                     case ("Show all rooms"):
                         List<Room> rooms = roomRepo.GetAll();
                         foreach (Room r in rooms)
@@ -100,6 +101,7 @@ namespace Roommates
                         Console.ReadKey();
                         break;
 
+                    // ---------------------------------------------CHORES--------------------------------------------- //
                     case ("Show all chores"):
                         List<Chore> chores = choreRepo.GetAll();
                         foreach (Chore c in chores)
@@ -166,6 +168,27 @@ namespace Roommates
                         Console.ReadKey();
                         break;
 
+                    case ("Update a chore"):
+                        List<Chore> choreOptions = choreRepo.GetAll();
+                        foreach (Chore r in choreOptions)
+                        {
+                            Console.WriteLine($"{r.Id} - {r.Name}");
+                        }
+
+                        Console.Write("Which chore would you like to update? ");
+                        int selectedChoreId = int.Parse(Console.ReadLine());
+                        Chore selectedChore = choreOptions.FirstOrDefault(r => r.Id == selectedChoreId);
+
+                        Console.Write("New chore description: ");
+                        selectedChore.Name = Console.ReadLine();
+
+                        choreRepo.Update(selectedChore);
+
+                        Console.WriteLine("Chore has been successfully updated");
+                        Console.Write("Press any key to continue");
+                        Console.ReadKey();
+                        break;
+                    // ---------------------------------------------ROOMMATES--------------------------------------------- //
                     //case ("Show all roommates"):
                     //    List<Roommate> roommates = roommateRepo.GetAll();
                     //    foreach (Roommate r in roommates)
@@ -236,6 +259,7 @@ namespace Roommates
                 "Add a chore",
                 "Show unassigned chores",
                 "Assign a chore",
+                "Update a chore",
                 //"Show all roommates",
                 "Search for roommate",
                 //"Add a roommate",
