@@ -172,9 +172,17 @@ namespace Roommates.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "DELETE FROM Chore WHERE Id = @id";
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.ExecuteNonQuery();
+                    try {
+                        cmd.CommandText = "DELETE FROM Chore WHERE Id = @id";
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (SqlException)
+                    {
+                        Console.WriteLine("Cannot delete a chore that has roommate assigned");
+                    }
+
+                    
                 }
             }
         }
